@@ -4,7 +4,7 @@
 
 int add(int a, int b) { return a+b; }
 int sub(int a, int b) { return a-b; }
-char* mp (int a,int b) {return "muie popa";}
+
 
 int main()
 {
@@ -49,10 +49,7 @@ int main()
             res.result = add(req.arg1, req.arg2);
         } else if (strcmp(req.func, "sub") == 0) {
             res.result = sub(req.arg1, req.arg2);
-        } else if(strcmp(req.func, "mp") == 0) {
-            printf("%s\n", mp(req.arg1, req.arg2));
-            res.result = 69;
-        }
+        } 
         else {
             res.err_code = 1;
             res.result = 0;
