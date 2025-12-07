@@ -1,15 +1,30 @@
 #include "rpc_common.h"
 #include <pthread.h>
 
+// ============================
+// Variabile globale pentru sincronizare
+// ============================
+int client_count = 0;   // număr clienți activi
+pthread_mutex_t client_lock = PTHREAD_MUTEX_INITIALIZER;
+
+// ============================
+// Funcțiile RPC
+// ============================
 int add(int a, int b) { return a + b; }
 int sub(int a, int b) { return a - b; }
 
-// -----------------------------
+// ============================
 // Thread handler pentru fiecare client
-// -----------------------------
+// ============================
 void *handle_client(void *arg) {
     int client_fd = *(int*)arg;
     free(arg);
+
+    // ---- SINCRONIZARE: incrementăm numărul de clienți activi ----
+    pthread_mutex_lock(&client_lock);
+    client_count++;
+    printf("[Server] Client conectat. Clienti activi: %d\n", client_count);
+    pthread_mutex_unlock(&client_lock);
 
     rpc_request req;
     rpc_response res;
@@ -17,6 +32,13 @@ void *handle_client(void *arg) {
     ssize_t r = read(client_fd, &req, sizeof(req));
     if (r <= 0) {
         close(client_fd);
+
+        // ---- SINCRONIZARE: decrementăm la deconectare ----
+        pthread_mutex_lock(&client_lock);
+        client_count--;
+        printf("[Server] Client deconectat. Clienti activi: %d\n", client_count);
+        pthread_mutex_unlock(&client_lock);
+
         pthread_exit(NULL);
     }
 
@@ -39,12 +61,18 @@ void *handle_client(void *arg) {
     printf("[Server] Rezultat trimis pentru %s(%d,%d): %d\n",
            req.func, req.arg1, req.arg2, res.result);
 
+    // ---- SINCRONIZARE: decrementăm numărul de clienți ----
+    pthread_mutex_lock(&client_lock);
+    client_count--;
+    printf("[Server] Client deconectat. Clienti activi: %d\n", client_count);
+    pthread_mutex_unlock(&client_lock);
+
     pthread_exit(NULL);
 }
 
-// -----------------------------
+// ============================
 // Funcția principală server
-// -----------------------------
+// ============================
 int main() {
     int server_fd;
     struct sockaddr_in serv_addr, cli_addr;
@@ -77,7 +105,6 @@ int main() {
 
     printf("[Server] Pornit și ascultă pe portul %d\n", PORT);
 
-    // bucla principală — acceptă clienți simultan
     while (1) {
         int *client_fd = malloc(sizeof(int));
         *client_fd = accept(server_fd, (struct sockaddr*)&cli_addr, &cli_len);
@@ -88,11 +115,9 @@ int main() {
             continue;
         }
 
-        printf("[Server] Client conectat\n");
-
         pthread_t tid;
         pthread_create(&tid, NULL, handle_client, client_fd);
-        pthread_detach(tid); // nu trebuie să aștepți thread-urile
+        pthread_detach(tid);  // threadul se curăță singur la final
     }
 
     close(server_fd);
