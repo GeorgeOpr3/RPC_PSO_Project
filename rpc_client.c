@@ -10,12 +10,12 @@ typedef struct {
     char func[LG_FUNCTIE_MAX];
     int arg1;
     int arg2;
-    int priority;      // NOU
+    int priority;     
     char ip[32];
     int port;
 } async_call_args;
 
-// -------------------- ASINCRON --------------------
+
 void *rpc_call_async_thread(void *arg) {
     async_call_args *data = (async_call_args*)arg;
 
@@ -23,7 +23,7 @@ void *rpc_call_async_thread(void *arg) {
     strcpy(req.func, data->func);
     req.arg1 = data->arg1;
     req.arg2 = data->arg2;
-    req.priority = data->priority;   // NOU
+    req.priority = data->priority;   
 
     rpc_response res;
     int sock = rpc_connect(data->ip, data->port, 2000);
@@ -96,14 +96,14 @@ void rpc_call_async(const char *ip, int port,
     strcpy(args->func, func);
     args->arg1 = a;
     args->arg2 = b;
-    args->priority = priority;   // NOU
+    args->priority = priority;   
 
     pthread_t tid;
     pthread_create(&tid, NULL, rpc_call_async_thread, args);
     pthread_detach(tid);
 }
 
-// -------------------- SINCRON --------------------
+
 int rpc_call_sync(const char *host, uint16_t port,
                   const char *func, int arg1, int arg2,
                   int priority,
@@ -119,7 +119,7 @@ int rpc_call_sync(const char *host, uint16_t port,
     strcpy(req.func, func);
     req.arg1 = arg1;
     req.arg2 = arg2;
-    req.priority = priority;  // NOU
+    req.priority = priority;  
 
     int sock = rpc_connect(host, port,
         opts.timeout_ms > 0 ? opts.timeout_ms : 2000);

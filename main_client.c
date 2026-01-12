@@ -4,18 +4,11 @@
 #include <string.h>
 
 int main(int argc, char *argv[]) {
-
-    // -------------------------
-    // Valori default
-    // -------------------------
     char IP[32] = "127.0.0.1";
     int port = PORT;
     int timeout = 3000;
-    int priority = PRIORITY_HIGH;   // HIGH implicit
+    int priority = PRIORITY_HIGH;   
 
-    // -------------------------
-    // Parsare flaguri
-    // -------------------------
     for (int i = 1; i < argc; i++) {
         if (strcmp(argv[i], "--ip") == 0 && i + 1 < argc) {
             strcpy(IP, argv[++i]);
@@ -46,10 +39,7 @@ int main(int argc, char *argv[]) {
 
     int mode, a, b, result;
     char func[LG_FUNCTIE_MAX];
-
-    // -------------------------
-    // Meniu principal
-    // -------------------------
+//meniu principal
     while (1) {
         printf("\n=== CLIENT RPC ===\n");
         printf("Server: %s:%d | timeout=%dms | priority=%s\n",
@@ -77,27 +67,25 @@ int main(int argc, char *argv[]) {
         opts.retries = 1;
 
         if (mode == 1) {
-            // ---------- SINCRON ----------
             rpc_call_sync(
                 IP,
                 port,
                 func,
                 a,
                 b,
-                priority,   // <-- PARAMETRUL NOU
+                priority,   
                 &result,
                 opts
             );
         }
         else if (mode == 2) {
-            // ---------- ASINCRON ----------
             rpc_call_async(
                 IP,
                 port,
                 func,
                 a,
                 b,
-                priority    // <-- PARAMETRUL NOU
+                priority    
             );
         }
         else {

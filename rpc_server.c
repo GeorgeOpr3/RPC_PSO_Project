@@ -26,7 +26,7 @@ void *handle_client(void *arg) {
            req.priority == PRIORITY_HIGH ? "HIGH" : "LOW");
 
     if (req.priority == PRIORITY_LOW)
-        sleep(3);   // simulare prioritate joasa
+        sleep(3);   
 
     res.err_code = 0;
     if (!strcmp(req.func, "add"))

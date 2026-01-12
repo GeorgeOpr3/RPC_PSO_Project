@@ -18,12 +18,12 @@ typedef struct {
     char func[LG_FUNCTIE_MAX];
     int arg1;
     int arg2;
-    int priority;   // NOU
+    int priority;   
 } rpc_request;
 
 typedef struct {
     int result;
-    int err_code; // 0 = succes, !=0 eroare
+    int err_code; 
 } rpc_response;
 
 #endif
