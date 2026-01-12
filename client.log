@@ -1,0 +1,4 @@
+[Sync] Timeout/Eroare pentru add(1,2) prio=LOW
+[Async] add(2,3) = 5 | prio=LOW
+[Async] add(1,3) = 4 | prio=HIGH
+[Sync] add(3,4) = 7 | prio=HIGH

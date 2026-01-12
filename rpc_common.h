@@ -11,18 +11,19 @@
 #define LG_FUNCTIE_MAX 30
 #define MSG_MAX 200
 
-typedef struct
-{
+#define PRIORITY_LOW  0
+#define PRIORITY_HIGH 1
+
+typedef struct {
     char func[LG_FUNCTIE_MAX];
     int arg1;
     int arg2;
-}rpc_request;
+    int priority;   // NOU
+} rpc_request;
 
-typedef struct
-{
+typedef struct {
     int result;
-    int err_code; // 0 = succes, daca nu err
-}rpc_response;
+    int err_code; // 0 = succes, !=0 eroare
+} rpc_response;
 
 #endif
-
